@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSMIET · Contact</title>
+  <!-- Bootstrap 5 + Icons + custom HiFi touch -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background:  #2b436d; }
+    .hifi-primary { color: #0b2b4a; }
+    .hifi-accent { color: #f5a623; }
+    .btn-hifi { background: #f5a623; border: none; color: #0b2b4a; font-weight: 600; }
+    .btn-hifi:hover { background: #e09515; color: #0b2b4a; }
+    .card-hifi { border: none; border-radius: 24px; box-shadow: 0 20px 40px -12px rgba(11,43,74,0.15); transition: 0.25s ease; }
+    .card-hifi:hover { transform: translateY(-4px); box-shadow: 0 28px 48px -16px rgba(11,43,74,0.2); }
+    .navbar-hifi { background: #0b2b4a; backdrop-filter: blur(4px); }
+    .nav-link-hifi { color: rgba(255,255,255,0.8) !important; font-weight: 500; padding: 0.6rem 1.2rem !important; border-radius: 40px; }
+    .nav-link-hifi:hover { color: #f5a623 !important; background: rgba(245,166,35,0.08); }
+    .nav-link-hifi.active { color: #f5a623 !important; background: rgba(245,166,35,0.12); }
+    .form-control-hifi { border-radius: 60px; padding: 0.75rem 1.5rem; border: 1px solid #dce3ed; background: white; }
+    .form-control-hifi:focus { border-color: #f5a623; box-shadow: 0 0 0 4px #f5a62330; }
+    .page-tag { background: #0b2b4a08; padding: 0.3rem 1.2rem; border-radius: 40px; color: #0b2b4a; font-weight: 500; letter-spacing: 0.3px; }
+    .footer-hifi { background: #0b2b4a; border-radius: 48px 48px 0 0; }
+    .page-section { padding-top: 2rem; padding-bottom: 2rem; }
+    .icon-box { width: 56px; height: 56px; background: #f5a62310; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #f5a623; font-size: 1.8rem; }
+    textarea { border-radius: 24px !important; padding: 1rem !important; border: 1px solid #dce3ed !important; }
+    textarea:focus { border-color: #f5a623 !important; box-shadow: 0 0 0 4px #f5a62330 !important; }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar navbar-expand-lg navbar-hifi py-3 px-3 px-lg-5">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white fw-bold fs-4 d-flex align-items-center gap-2" href="home.html">
+        <i class="bi bi-mortarboard-fill" style="color: #f5a623;"></i> SSMIET <span style="font-weight: 300; color: #f5a623;">·</span> No Due
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+      </button>
+       {% include 'menu_page.html' %}
+    </div>
+  </nav>
+
+  <!-- ========== CONTACT PAGE ========== -->
+  <section id="contact" class="page-section px-3 px-lg-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="card card-hifi p-4 p-lg-5">
+            <div class="text-center mb-4">
+              <span class="page-tag"><i class="bi bi-envelope me-1"></i> Contact</span>
+              <h2 class="fw-bold hifi-primary mt-2">Get in touch</h2>
+              <p class="text-secondary">No Due support · SSMIET administration</p>
+            </div>
+            <div class="row g-4">
+              <!-- Contact Info -->
+              <div class="col-md-5">
+                <div class="d-flex gap-3 mb-4">
+                  <div class="icon-box"><i class="bi bi-geo-alt"></i></div>
+                  <div>
+                    <h6 class="fw-bold mb-0 hifi-primary">Address</h6>
+                    <p class="text-secondary">SSMIET Campus, Bhubaneswar, Odisha - 751024</p>
+                  </div>
+                </div>
+                <div class="d-flex gap-3 mb-4">
+                  <div class="icon-box"><i class="bi bi-envelope"></i></div>
+                  <div>
+                    <h6 class="fw-bold mb-0 hifi-primary">Email</h6>
+                    <p class="text-secondary">nodelay@ssmiet.edu.in</p>
+                  </div>
+                </div>
+                <div class="d-flex gap-3 mb-4">
+                  <div class="icon-box"><i class="bi bi-telephone"></i></div>
+                  <div>
+                    <h6 class="fw-bold mb-0 hifi-primary">Phone</h6>
+                    <p class="text-secondary">+91 98765 43210</p>
+                  </div>
+                </div>
+                <div class="d-flex gap-3">
+                  <div class="icon-box"><i class="bi bi-clock"></i></div>
+                  <div>
+                    <h6 class="fw-bold mb-0 hifi-primary">Office Hours</h6>
+                    <p class="text-secondary">Mon-Fri: 9:00 AM - 5:00 PM</p>
+                  </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="d-flex gap-3">
+                  <a href="https://www.facebook.com/" class="btn btn-outline-secondary rounded-circle p-3" style="width: 56px; height: 56px;"><i class="bi bi-facebook fs-5"></i></a>
+                  <a href="https://x.com/" class="btn btn-outline-secondary rounded-circle p-3" style="width: 56px; height: 56px;"><i class="bi bi-twitter fs-5"></i></a>
+                  <a href="https://www.linkedin.com/feed" class="btn btn-outline-secondary rounded-circle p-3" style="width: 56px; height: 56px;"><i class="bi bi-linkedin fs-5"></i></a>
+                  <a href="https://www.instagram.com/" class="btn btn-outline-secondary rounded-circle p-3" style="width: 56px; height: 56px;"><i class="bi bi-instagram fs-5"></i></a>
+                </div>
+              </div>
+              
+              <!-- Contact Form -->
+              <!-- Contact Form -->
+<div class="col-md-7">
+    <form id="contactForm">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Your Name</label>
+            <input type="text" id="userName" class="form-control form-control-hifi" placeholder="Enter your full name" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Email Address</label>
+            <input type="email" id="userEmail" class="form-control form-control-hifi" placeholder="your@email.com" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Subject</label>
+            <input type="text" id="userSubject" class="form-control form-control-hifi" placeholder="Subject of your message">
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Message</label>
+            <textarea id="userMessage" class="form-control" rows="4" placeholder="Write your message regarding No Due clearance..." style="border-radius: 24px; padding: 1rem; border: 1px solid #dce3ed;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-hifi w-100 rounded-pill py-3 fw-bold"><i class="bi bi-send me-2"></i> Send Message</button>
+    </form>
+    
+    <!-- Success Message Only -->
+    <div id="successMessage" style="display: none; margin-top: 15px;">
+        <div class="alert alert-success" role="alert" style="border-radius: 16px; text-align: center; padding: 15px;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <strong>Submitted Successfully!</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById("contactForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    // Show success message
+    document.getElementById("successMessage").style.display = "block";
+    
+    // Clear form
+    this.reset();
+    
+    // Hide after 3 seconds
+    setTimeout(function() {
+        document.getElementById("successMessage").style.display = "none";
+    }, 3000);
+});
+</script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ 
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+{% include 'footer_page.html' %}

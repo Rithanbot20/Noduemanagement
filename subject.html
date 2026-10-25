@@ -1,0 +1,839 @@
+{% load static %}
+{% include 'header.html' %}
+
+<main class="dashboard-content">
+  <div class="container-fluid px-3 px-lg-4 py-4">
+
+    <!-- ===== PAGE HEADING ===== -->
+    <div class="page-heading">
+      <div class="page-heading-copy">
+        <span class="page-icon"><i class="bi bi-journal-bookmark-fill" aria-hidden="true"></i></span>
+        <div>
+          <p class="eyebrow mb-1">Academic Records</p>
+          <h1 class="h3 mb-1">📚 Complete Semester Details</h1>
+          <p class="text-muted mb-0" id="deptDisplay">Showing: <strong>All Departments</strong></p>
+        </div>
+      </div>
+      <div class="heading-actions">
+        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="window.print()">
+          <i class="bi bi-download" aria-hidden="true"></i> Export Report
+        </button>
+        <button class="btn btn-primary btn-sm" type="button">
+          <i class="bi bi-plus-circle" aria-hidden="true"></i> Add Subject
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== DEPARTMENT FILTER + STATS ===== -->
+    <!-- ============================================================ -->
+    <div class="row g-3 mb-3">
+      <!-- Sidebar Filter -->
+      <div class="col-12 col-md-3">
+        <div class="panel">
+          <div class="panel-header">
+            <h5 class="mb-0"><i class="bi bi-funnel"></i> Filter by Department</h5>
+          </div>
+          <div class="list-group list-group-flush" id="deptFilter">
+            <button class="list-group-item list-group-item-action active" data-dept="all" onclick="filterDepartment('all')">
+              <i class="bi bi-grid-3x3-gap-fill"></i> All Departments
+              <span class="badge bg-primary float-end" id="totalBadge">336</span>
+            </button>
+            <button class="list-group-item list-group-item-action" data-dept="cse" onclick="filterDepartment('cse')">
+              <i class="bi bi-laptop"></i> Computer Science (CSE)
+              <span class="badge bg-info float-end">48</span>
+            </button>
+            <button class="list-group-item list-group-item-action" data-dept="it" onclick="filterDepartment('it')">
+              <i class="bi bi-globe"></i> Information Technology (IT)
+              <span class="badge bg-info float-end">48</span>
+            </button>
+            <button class="list-group-item list-group-item-action" data-dept="ece" onclick="filterDepartment('ece')">
+              <i class="bi bi-radio"></i> Electronics & Communication (ECE)
+              <span class="badge bg-info float-end">48</span>
+            </button>
+            <button class="list-group-item list-group-item-action" data-dept="eee" onclick="filterDepartment('eee')">
+              <i class="bi bi-lightning"></i> Electrical & Electronics (EEE)
+              <span class="badge bg-info float-end">48</span>
+            </button>
+            <button class="list-group-item list-group-item-action" data-dept="mech" onclick="filterDepartment('mech')">
+              <i class="bi bi-gear"></i> Mechanical (MECH)
+              <span class="badge bg-info float-end">48</span>
+            </button>
+            <button class="list-group-item list-group-item-action" data-dept="civil" onclick="filterDepartment('civil')">
+              <i class="bi bi-building"></i> Civil (CIVIL)
+              <span class="badge bg-info float-end">48</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="col-12 col-md-9">
+        <section class="row g-3">
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="metric-card metric-primary" style="border-left:4px solid #0d6efd;">
+              <div class="metric-top">
+                <span class="metric-label">📚 Total Subjects</span>
+                <span class="metric-icon"><i class="bi bi-book"></i></span>
+              </div>
+              <div class="metric-value" id="totalSubjects">336</div>
+              <div class="metric-meta"><span>Across 8 Semesters × 6 Depts</span></div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="metric-card metric-success" style="border-left:4px solid #28a745;">
+              <div class="metric-top">
+                <span class="metric-label">✅ Theory Passed</span>
+                <span class="metric-icon"><i class="bi bi-check-circle-fill text-success"></i></span>
+              </div>
+              <div class="metric-value" id="subjectsPassed">240</div>
+              <div class="metric-meta"><span class="text-success" id="passPercentage">93.7%</span> completion</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="metric-card metric-warning" style="border-left:4px solid #ffc107;">
+              <div class="metric-top">
+                <span class="metric-label">🧪 Lab Passed</span>
+                <span class="metric-icon"><i class="bi bi-flask text-warning"></i></span>
+              </div>
+              <div class="metric-value" id="inProgress">75</div>
+              <div class="metric-meta"><span>Practical exams</span></div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="metric-card metric-info" style="border-left:4px solid #17a2b8;">
+              <div class="metric-top">
+                <span class="metric-label">👨‍🏫 Total Staff</span>
+                <span class="metric-icon"><i class="bi bi-people"></i></span>
+              </div>
+              <div class="metric-value" id="totalStaff">42</div>
+              <div class="metric-meta"><span>Faculty members</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== SEMESTER ACCORDION ===== -->
+    <!-- ============================================================ -->
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="h5 mb-1 section-title">
+            <i class="bi bi-table" aria-hidden="true"></i>
+            <span>📋 Semester-wise Subject Details</span>
+          </h2>
+          <p class="text-muted mb-0">Click on each semester to expand and view subjects with staff details.</p>
+        </div>
+        <input class="form-control form-control-sm table-search" type="search" placeholder="Search subjects..." id="searchSubject" style="max-width:250px;" aria-label="Search subjects">
+      </div>
+
+      <div class="accordion" id="semesterAccordion">
+
+        <!-- ============================================================ -->
+        <!-- ===== SEMESTER 1 ===== -->
+        <!-- ============================================================ -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading1">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+              <div class="d-flex justify-content-between w-100 me-3 flex-wrap">
+                <span><strong>📘 Semester 1</strong> - Foundation Courses</span>
+                <span>
+                  <span class="badge bg-primary rounded-pill" id="s1count">42 Subjects</span>
+                  <span class="badge bg-success rounded-pill">✅ Theory: 28 | Lab: 14</span>
+                  <span class="badge bg-info text-white rounded-pill">CGPA: 8.9</span>
+                </span>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#semesterAccordion">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table align-middle table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Dept</th>
+                      <th>Type</th>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Credits</th>
+                      <th>Staff Name</th>
+                      <th>Designation</th>
+                      <th>Total Marks</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-dept="cse"><td>1</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1101</span></td><td>Engineering Mathematics - I</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>2</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">PH1101</span></td><td>Engineering Physics</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>85</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>3</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CY1101</span></td><td>Engineering Chemistry</td><td>3</td><td>Dr. Lakshmi N</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>4</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS1101</span></td><td>Programming in C</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>95</strong></td><td><span class="badge text-bg-success">A+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>5</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME1101</span></td><td>Basic Mechanical Engineering</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>6</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EN1101</span></td><td>Communicative English</td><td>2</td><td>Ms. Kavitha S</td><td><span class="badge text-bg-info">Senior Lecturer</span></td><td><strong>82</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>7</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS1110</span></td><td>C Programming Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>100</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>8</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1101</span></td><td>Engineering Mathematics - I</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>9</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT1101</span></td><td>IT Fundamentals</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>10</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">PH1101</span></td><td>Engineering Physics</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>11</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT1110</span></td><td>IT Fundamentals Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>96</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>12</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1101</span></td><td>Engineering Mathematics - I</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>13</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC1101</span></td><td>Basic Electronics</td><td>4</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>14</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC1110</span></td><td>Electronics Lab - I</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>15</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1101</span></td><td>Engineering Mathematics - I</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>16</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE1101</span></td><td>Electrical Circuits</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>17</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE1110</span></td><td>Electrical Lab - I</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>18</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1101</span></td><td>Engineering Mathematics - I</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>19</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME1101</span></td><td>Engineering Mechanics</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>20</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME1110</span></td><td>Workshop Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>84</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>21</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1101</span></td><td>Engineering Mathematics - I</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>22</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV1101</span></td><td>Basics of Civil Engineering</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>23</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV1110</span></td><td>Civil Engineering Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>80</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>24</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS1102</span></td><td>Problem Solving & Logic</td><td>3</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>25</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT1102</span></td><td>Digital Fundamentals</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>26</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC1102</span></td><td>Network Theory</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>27</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE1102</span></td><td>Electrical Machines</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>28</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME1102</span></td><td>Engineering Drawing</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>29</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV1102</span></td><td>Engineering Drawing</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>30</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS1120</span></td><td>Physics Lab</td><td>1</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>31</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT1120</span></td><td>Physics Lab</td><td>1</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>32</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC1120</span></td><td>Physics Lab</td><td>1</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>33</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE1120</span></td><td>Physics Lab</td><td>1</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>34</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME1120</span></td><td>Physics Lab</td><td>1</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>35</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV1120</span></td><td>Physics Lab</td><td>1</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>74</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ===== SEMESTER 2 ===== -->
+        <!-- ============================================================ -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading2">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+              <div class="d-flex justify-content-between w-100 me-3 flex-wrap">
+                <span><strong>📗 Semester 2</strong> - Core Engineering</span>
+                <span>
+                  <span class="badge bg-primary rounded-pill" id="s2count">36 Subjects</span>
+                  <span class="badge bg-success rounded-pill">✅ Theory: 24 | Lab: 12</span>
+                  <span class="badge bg-info text-white rounded-pill">CGPA: 8.7</span>
+                </span>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#semesterAccordion">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table align-middle table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Dept</th>
+                      <th>Type</th>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Credits</th>
+                      <th>Staff Name</th>
+                      <th>Designation</th>
+                      <th>Total Marks</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-dept="cse"><td>1</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1201</span></td><td>Engineering Mathematics - II</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>2</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS1201</span></td><td>Data Structures & Algorithms</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>3</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS1202</span></td><td>Digital Logic Design</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>4</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS1203</span></td><td>Python Programming</td><td>3</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>98</strong></td><td><span class="badge text-bg-success">A+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>5</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS1210</span></td><td>Data Structures Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>100</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>6</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS1220</span></td><td>Python Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>98</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>7</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1201</span></td><td>Engineering Mathematics - II</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>8</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT1201</span></td><td>Web Technologies</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>9</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT1210</span></td><td>Web Technologies Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>96</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>10</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1201</span></td><td>Engineering Mathematics - II</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>11</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC1201</span></td><td>Electronic Devices</td><td>4</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>12</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC1210</span></td><td>Electronics Lab - II</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>13</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1201</span></td><td>Engineering Mathematics - II</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>14</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE1201</span></td><td>DC Machines</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>15</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE1210</span></td><td>Electrical Lab - II</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>16</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1201</span></td><td>Engineering Mathematics - II</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>80</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>17</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME1201</span></td><td>Strength of Materials</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>18</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME1210</span></td><td>Mechanical Workshop</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>19</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">MA1201</span></td><td>Engineering Mathematics - II</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>76</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>20</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV1201</span></td><td>Mechanics of Structures</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>21</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV1210</span></td><td>Civil Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>84</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ===== SEMESTER 3 ===== -->
+        <!-- ============================================================ -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading3">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+              <div class="d-flex justify-content-between w-100 me-3 flex-wrap">
+                <span><strong>📙 Semester 3</strong> - Core CS</span>
+                <span>
+                  <span class="badge bg-primary rounded-pill" id="s3count">36 Subjects</span>
+                  <span class="badge bg-success rounded-pill">✅ Theory: 24 | Lab: 12</span>
+                  <span class="badge bg-info text-white rounded-pill">CGPA: 8.5</span>
+                </span>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#semesterAccordion">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table align-middle table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Dept</th>
+                      <th>Type</th>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Credits</th>
+                      <th>Staff Name</th>
+                      <th>Designation</th>
+                      <th>Total Marks</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-dept="cse"><td>1</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS2301</span></td><td>Database Management Systems</td><td>4</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>2</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS2302</span></td><td>Operating Systems</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>3</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS2303</span></td><td>Object Oriented Programming</td><td>3</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>4</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS2304</span></td><td>Software Engineering</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>5</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS2310</span></td><td>DBMS Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>98</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>6</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS2320</span></td><td>OOPs Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>98</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>7</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT2301</span></td><td>Advanced Database Systems</td><td>4</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>8</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT2302</span></td><td>Data Structures</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>9</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT2310</span></td><td>Data Structures Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>10</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC2301</span></td><td>Analog Electronics</td><td>4</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>11</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC2302</span></td><td>Microprocessors</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>12</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC2310</span></td><td>Analog Electronics Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>13</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE2301</span></td><td>Power Electronics</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>14</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE2302</span></td><td>Control Systems</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>15</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE2310</span></td><td>Power Electronics Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>16</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME2301</span></td><td>Kinematics of Machines</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>17</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME2302</span></td><td>Machine Drawing</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>18</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME2310</span></td><td>Kinematics Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>84</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>19</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV2301</span></td><td>Structural Analysis</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>20</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV2302</span></td><td>Building Planning</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>74</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>21</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV2310</span></td><td>Surveying Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>80</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ===== SEMESTER 4 ===== -->
+        <!-- ============================================================ -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading4">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+              <div class="d-flex justify-content-between w-100 me-3 flex-wrap">
+                <span><strong>📕 Semester 4</strong> - Advanced CS</span>
+                <span>
+                  <span class="badge bg-primary rounded-pill" id="s4count">36 Subjects</span>
+                  <span class="badge bg-success rounded-pill">✅ Theory: 24 | Lab: 12</span>
+                  <span class="badge bg-info text-white rounded-pill">CGPA: 8.8</span>
+                </span>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#semesterAccordion">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table align-middle table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Dept</th>
+                      <th>Type</th>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Credits</th>
+                      <th>Staff Name</th>
+                      <th>Designation</th>
+                      <th>Total Marks</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-dept="cse"><td>1</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS2401</span></td><td>Computer Networks</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>2</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS2402</span></td><td>Data Science & Analytics</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>96</strong></td><td><span class="badge text-bg-success">A+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>3</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS2403</span></td><td>Theory of Computation</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>4</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS2404</span></td><td>Compiler Design</td><td>3</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>5</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS2410</span></td><td>Networks Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>98</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>6</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS2420</span></td><td>Data Science Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>96</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>7</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT2401</span></td><td>Computer Networks</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>8</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT2402</span></td><td>Software Engineering</td><td>4</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>9</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT2410</span></td><td>Networks Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>10</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC2401</span></td><td>Communication Systems</td><td>4</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>11</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC2402</span></td><td>Digital Signal Processing</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>12</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC2410</span></td><td>Communication Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>13</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE2401</span></td><td>Power Systems</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>14</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE2402</span></td><td>Power Electronics</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>15</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE2410</span></td><td>Power Systems Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>86</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>16</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME2401</span></td><td>Dynamics of Machines</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>80</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>17</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME2402</span></td><td>Thermodynamics</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>18</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME2410</span></td><td>Dynamics Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>84</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>19</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV2401</span></td><td>Structural Design</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>76</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>20</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV2402</span></td><td>Geotechnical Engineering</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>72</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>21</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV2410</span></td><td>Geotech Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>78</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ===== SEMESTER 5 ===== -->
+        <!-- ============================================================ -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading5">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+              <div class="d-flex justify-content-between w-100 me-3 flex-wrap">
+                <span><strong>📒 Semester 5</strong> - Specialization</span>
+                <span>
+                  <span class="badge bg-primary rounded-pill" id="s5count">36 Subjects</span>
+                  <span class="badge bg-success rounded-pill">✅ Theory: 24 | Lab: 12</span>
+                  <span class="badge bg-info text-white rounded-pill">CGPA: 8.6</span>
+                </span>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#semesterAccordion">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table align-middle table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Dept</th>
+                      <th>Type</th>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Credits</th>
+                      <th>Staff Name</th>
+                      <th>Designation</th>
+                      <th>Total Marks</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-dept="cse"><td>1</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3501</span></td><td>Artificial Intelligence</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>98</strong></td><td><span class="badge text-bg-success">A+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>2</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3502</span></td><td>Machine Learning</td><td>4</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>3</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3503</span></td><td>Web Technologies</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>4</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3504</span></td><td>Cloud Computing</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>5</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS3510</span></td><td>ML Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>100</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>6</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS3520</span></td><td>Web Technologies Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>96</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>7</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3501</span></td><td>Cloud Computing</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>8</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3502</span></td><td>Artificial Intelligence</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>9</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT3510</span></td><td>Cloud Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>10</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3501</span></td><td>Embedded Systems</td><td>4</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>11</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3502</span></td><td>Wireless Communication</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>12</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC3510</span></td><td>Embedded Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>13</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3501</span></td><td>Power System Analysis</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>14</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3502</span></td><td>Control Systems</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>80</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>15</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE3510</span></td><td>Power Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>84</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>16</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3501</span></td><td>Thermal Engineering</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>17</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3502</span></td><td>Fluid Mechanics</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>80</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>18</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME3510</span></td><td>Thermal Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>82</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>19</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3501</span></td><td>Hydraulics</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>74</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>20</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3502</span></td><td>Transportation Engineering</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>70</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>21</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV3510</span></td><td>Hydraulics Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>76</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ===== SEMESTER 6 ===== -->
+        <!-- ============================================================ -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading6">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+              <div class="d-flex justify-content-between w-100 me-3 flex-wrap">
+                <span><strong>📓 Semester 6</strong> - Electives</span>
+                <span>
+                  <span class="badge bg-primary rounded-pill" id="s6count">36 Subjects</span>
+                  <span class="badge bg-success rounded-pill">✅ Theory: 24 | Lab: 12</span>
+                  <span class="badge bg-info text-white rounded-pill">CGPA: 8.4</span>
+                </span>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse6" class="accordion-collapse collapse" data-bs-parent="#semesterAccordion">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table align-middle table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Dept</th>
+                      <th>Type</th>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Credits</th>
+                      <th>Staff Name</th>
+                      <th>Designation</th>
+                      <th>Total Marks</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-dept="cse"><td>1</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3601</span></td><td>Cyber Security</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>2</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3602</span></td><td>Blockchain Technology</td><td>3</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>3</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3603</span></td><td>Mobile App Development</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>4</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3604</span></td><td>Mini Project</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>5</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS3610</span></td><td>Cyber Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>96</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>6</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS3620</span></td><td>Mobile App Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>7</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3601</span></td><td>Cyber Security</td><td>4</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>8</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3602</span></td><td>Mobile Computing</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>9</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT3610</span></td><td>Cyber Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>10</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3601</span></td><td>VLSI Design</td><td>4</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>11</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3602</span></td><td>Optical Communication</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>12</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC3610</span></td><td>VLSI Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>13</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3601</span></td><td>Power System Protection</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>80</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>14</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3602</span></td><td>Renewable Energy</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>15</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE3610</span></td><td>Power Protection Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>82</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>16</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3601</span></td><td>Refrigeration & AC</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>76</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>17</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3602</span></td><td>Automobile Engineering</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>18</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME3610</span></td><td>Refrigeration Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>80</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>19</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3601</span></td><td>Transportation Engineering</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>72</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>20</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3602</span></td><td>Environmental Engineering</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>68</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>21</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV3610</span></td><td>Transportation Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>74</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ===== SEMESTER 7 ===== -->
+        <!-- ============================================================ -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading7">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
+              <div class="d-flex justify-content-between w-100 me-3 flex-wrap">
+                <span><strong>📔 Semester 7</strong> - Advanced Electives</span>
+                <span>
+                  <span class="badge bg-primary rounded-pill" id="s7count">36 Subjects</span>
+                  <span class="badge bg-success rounded-pill">✅ Theory: 24 | Lab: 12</span>
+                  <span class="badge bg-info text-white rounded-pill">CGPA: 8.3</span>
+                </span>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse7" class="accordion-collapse collapse" data-bs-parent="#semesterAccordion">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table align-middle table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Dept</th>
+                      <th>Type</th>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Credits</th>
+                      <th>Staff Name</th>
+                      <th>Designation</th>
+                      <th>Total Marks</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-dept="cse"><td>1</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3701</span></td><td>Deep Learning</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>2</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3702</span></td><td>Big Data Analytics</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>3</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3703</span></td><td>Internet of Things</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>80</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>4</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3704</span></td><td>DevOps</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>5</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS3710</span></td><td>Big Data Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>94</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>6</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS3720</span></td><td>IoT Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>7</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3701</span></td><td>Big Data Analytics</td><td>4</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>8</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3702</span></td><td>Deep Learning</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>90</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>9</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT3710</span></td><td>Big Data Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>92</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>10</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3701</span></td><td>Wireless Communication</td><td>4</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>11</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3702</span></td><td>Microwave Engineering</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>80</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>12</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC3710</span></td><td>Wireless Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>88</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>13</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3701</span></td><td>High Voltage Engineering</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>14</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3702</span></td><td>Power Quality</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>76</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>15</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE3710</span></td><td>High Voltage Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>80</strong></td><td><span class="badge text-bg-success">O</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>16</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3701</span></td><td>Mechatronics</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>74</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>17</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3702</span></td><td>CAD/CAM</td><td>3</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>76</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>18</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME3710</span></td><td>Mechatronics Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>78</strong></td><td><span class="badge text-bg-success">A</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>19</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3701</span></td><td>Water Resources</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>70</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>20</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3702</span></td><td>Foundation Engineering</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>66</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>21</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV3710</span></td><td>Water Resources Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>72</strong></td><td><span class="badge text-bg-success">A-</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ===== SEMESTER 8 ===== -->
+        <!-- ============================================================ -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading8">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse8" aria-expanded="false" aria-controls="collapse8">
+              <div class="d-flex justify-content-between w-100 me-3 flex-wrap">
+                <span><strong>📖 Semester 8</strong> - Final Year Project</span>
+                <span>
+                  <span class="badge bg-primary rounded-pill" id="s8count">36 Subjects</span>
+                  <span class="badge bg-warning rounded-pill">🔄 In Progress</span>
+                  <span class="badge bg-info text-white rounded-pill">CGPA: -</span>
+                </span>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse8" class="accordion-collapse collapse" data-bs-parent="#semesterAccordion">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table align-middle table-hover table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Dept</th>
+                      <th>Type</th>
+                      <th>Subject Code</th>
+                      <th>Subject Name</th>
+                      <th>Credits</th>
+                      <th>Staff Name</th>
+                      <th>Designation</th>
+                      <th>Total Marks</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-dept="cse"><td>1</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3801</span></td><td>Major Project - Phase I</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="cse"><td>2</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3802</span></td><td>Major Project - Phase II</td><td>6</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="cse"><td>3</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3803</span></td><td>Project Seminar</td><td>2</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>86</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="cse"><td>4</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CS3804</span></td><td>Comprehensive Viva Voce</td><td>2</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="cse"><td>5</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS3810</span></td><td>Project Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="cse"><td>6</td><td><span class="badge text-bg-primary">CSE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CS3820</span></td><td>Industry Internship</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="it"><td>7</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3801</span></td><td>Major Project - Phase I</td><td>4</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="it"><td>8</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3802</span></td><td>Major Project - Phase II</td><td>6</td><td>Prof. Arun K</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="it"><td>9</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3803</span></td><td>Project Seminar</td><td>2</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="it"><td>10</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">IT3804</span></td><td>Comprehensive Viva Voce</td><td>2</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="it"><td>11</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT3810</span></td><td>Project Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="it"><td>12</td><td><span class="badge text-bg-primary">IT</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">IT3820</span></td><td>Industry Internship</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="ece"><td>13</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3801</span></td><td>Major Project - Phase I</td><td>4</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="ece"><td>14</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3802</span></td><td>Major Project - Phase II</td><td>6</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="ece"><td>15</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3803</span></td><td>Project Seminar</td><td>2</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>84</strong></td><td><span class="badge text-bg-warning">B+</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="ece"><td>16</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EC3804</span></td><td>Comprehensive Viva Voce</td><td>2</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="ece"><td>17</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC3810</span></td><td>Project Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="ece"><td>18</td><td><span class="badge text-bg-primary">ECE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EC3820</span></td><td>Industry Internship</td><td>3</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="eee"><td>19</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3801</span></td><td>Major Project - Phase I</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="eee"><td>20</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3802</span></td><td>Major Project - Phase II</td><td>6</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="eee"><td>21</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3803</span></td><td>Project Seminar</td><td>2</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>82</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="eee"><td>22</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">EE3804</span></td><td>Comprehensive Viva Voce</td><td>2</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="eee"><td>23</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE3810</span></td><td>Project Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="eee"><td>24</td><td><span class="badge text-bg-primary">EEE</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">EE3820</span></td><td>Industry Internship</td><td>3</td><td>Dr. Deepa M</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="mech"><td>25</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3801</span></td><td>Major Project - Phase I</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="mech"><td>26</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3802</span></td><td>Major Project - Phase II</td><td>6</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="mech"><td>27</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3803</span></td><td>Project Seminar</td><td>2</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>80</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="mech"><td>28</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">ME3804</span></td><td>Comprehensive Viva Voce</td><td>2</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="mech"><td>29</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME3810</span></td><td>Project Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="mech"><td>30</td><td><span class="badge text-bg-primary">MECH</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">ME3820</span></td><td>Industry Internship</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="civil"><td>31</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3801</span></td><td>Major Project - Phase I</td><td>4</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="civil"><td>32</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3802</span></td><td>Major Project - Phase II</td><td>6</td><td>Dr. Suresh P</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="civil"><td>33</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3803</span></td><td>Project Seminar</td><td>2</td><td>Dr. Priya R</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>78</strong></td><td><span class="badge text-bg-primary">B</span></td><td><span class="badge text-bg-success">✅ Passed</span></td></tr>
+                    <tr data-dept="civil"><td>34</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-secondary">📖 Theory</span></td><td><span class="badge text-bg-secondary">CV3804</span></td><td>Comprehensive Viva Voce</td><td>2</td><td>Dr. Senthil Kumar</td><td><span class="badge text-bg-info">Professor</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="civil"><td>35</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV3810</span></td><td>Project Lab</td><td>2</td><td>Mr. Manoj B</td><td><span class="badge text-bg-info">Lab Incharge</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                    <tr data-dept="civil"><td>36</td><td><span class="badge text-bg-primary">CIVIL</span></td><td><span class="badge text-bg-warning">🧪 Lab</span></td><td><span class="badge text-bg-secondary">CV3820</span></td><td>Industry Internship</td><td>3</td><td>Dr. Ananya V</td><td><span class="badge text-bg-info">Associate Prof</span></td><td><strong>-</strong></td><td><span class="badge text-bg-secondary">-</span></td><td><span class="badge text-bg-warning">🔄 In Progress</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end accordion -->
+    </div><!-- end panel -->
+
+    <!-- ============================================================ -->
+    <!-- ===== BOTTOM SUMMARY ===== -->
+    <!-- ============================================================ -->
+    <section class="panel mt-3" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); color: #fff; border: none;">
+      <div class="panel-header d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+          <h5 class="mb-0">📊 Academic Summary</h5>
+          <small class="text-white-50">Complete semester-wise performance</small>
+        </div>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <span class="badge bg-white text-dark px-3 py-2" id="totalBadge2">📚 336 Subjects</span>
+          <span class="badge bg-success px-3 py-2" id="passedBadge">✅ 315 Passed</span>
+          <span class="badge bg-warning text-dark px-3 py-2" id="progressBadge">🔄 21 In Progress</span>
+          <span class="badge bg-danger px-3 py-2">❌ 0 Failed</span>
+        </div>
+      </div>
+      <div class="row g-2 px-3 pb-3">
+        <div class="col-12">
+          <div class="progress" style="height:10px;">
+            <div class="progress-bar bg-success" style="width:93.7%;" id="progressBar">93.7%</div>
+            <div class="progress-bar bg-warning" style="width:6.3%;" id="progressBar2">6.3%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ============================================================ -->
+<!-- ===== SCRIPTS ===== -->
+<!-- ============================================================ -->
+<script>
+// Department Filter Function
+function filterDepartment(dept) {
+  // Update active button
+  document.querySelectorAll('#deptFilter .list-group-item').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.dept === dept) {
+      btn.classList.add('active');
+    }
+  });
+
+  // Department names
+  const deptNames = {
+    'all': 'All Departments',
+    'cse': 'Computer Science (CSE)',
+    'it': 'Information Technology (IT)',
+    'ece': 'Electronics & Communication (ECE)',
+    'eee': 'Electrical & Electronics (EEE)',
+    'mech': 'Mechanical (MECH)',
+    'civil': 'Civil (CIVIL)'
+  };
+  document.getElementById('deptDisplay').innerHTML = 'Showing: <strong>' + (deptNames[dept] || 'All') + '</strong>';
+
+  // Filter all subject rows
+  const allRows = document.querySelectorAll('.table tbody tr');
+  let visibleCount = 0;
+  let passedCount = 0;
+  let inProgressCount = 0;
+
+  allRows.forEach(row => {
+    const rowDept = row.getAttribute('data-dept');
+    if (dept === 'all' || rowDept === dept) {
+      row.style.display = '';
+      visibleCount++;
+      const statusCell = row.querySelector('td:last-child .badge');
+      if (statusCell) {
+        const statusText = statusCell.textContent;
+        if (statusText.includes('Passed')) {
+          passedCount++;
+        } else if (statusText.includes('In Progress')) {
+          inProgressCount++;
+        }
+      }
+    } else {
+      row.style.display = 'none';
+    }
+  });
+
+  // Update stats
+  document.getElementById('totalSubjects').textContent = visibleCount;
+  document.getElementById('subjectsPassed').textContent = passedCount;
+  document.getElementById('inProgress').textContent = inProgressCount;
+  const passPercent = visibleCount > 0 ? Math.round((passedCount / visibleCount) * 100) : 0;
+  document.getElementById('passPercentage').textContent = passPercent + '%';
+
+  // Update bottom summary
+  document.getElementById('totalBadge2').textContent = '📚 ' + visibleCount + ' Subjects';
+  document.getElementById('passedBadge').textContent = '✅ ' + passedCount + ' Passed';
+  document.getElementById('progressBadge').textContent = '🔄 ' + inProgressCount + ' In Progress';
+  document.getElementById('progressBar').style.width = passPercent + '%';
+  document.getElementById('progressBar').textContent = passPercent + '%';
+  document.getElementById('progressBar2').style.width = (100 - passPercent) + '%';
+  document.getElementById('progressBar2').textContent = (100 - passPercent) + '%';
+
+  // Update semester badges
+  document.querySelectorAll('.accordion-item').forEach((item) => {
+    const table = item.querySelector('.table tbody');
+    if (table) {
+      const visibleRows = table.querySelectorAll('tr:not([style*="display: none"])');
+      const badge = item.querySelector('.badge.bg-primary');
+      if (badge) {
+        badge.textContent = visibleRows.length + ' Subjects';
+      }
+    }
+  });
+}
+
+// Search Function
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('searchSubject');
+  if (searchInput) {
+    searchInput.addEventListener('keyup', function() {
+      const searchTerm = this.value.toLowerCase().trim();
+      const tables = document.querySelectorAll('.table tbody');
+      
+      tables.forEach(table => {
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          if (searchTerm === '' || text.includes(searchTerm)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  // Accordion functionality
+  const accordionButtons = document.querySelectorAll('.accordion-button');
+  accordionButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const target = document.querySelector(this.dataset.bsTarget);
+      if (target) {
+        const isOpen = target.classList.contains('show');
+        if (isOpen) {
+          target.classList.remove('show');
+          this.classList.add('collapsed');
+          this.setAttribute('aria-expanded', 'false');
+        } else {
+          document.querySelectorAll('.accordion-collapse.show').forEach(panel => {
+            panel.classList.remove('show');
+            const btn = document.querySelector(`[data-bs-target="#${panel.id}"]`);
+            if (btn) {
+              btn.classList.add('collapsed');
+              btn.setAttribute('aria-expanded', 'false');
+            }
+          });
+          target.classList.add('show');
+          this.classList.remove('collapsed');
+          this.setAttribute('aria-expanded', 'true');
+        }
+      }
+    });
+  });
+});
+</script>
+
+{% include 'footer.html' %}

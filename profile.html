@@ -1,0 +1,802 @@
+{% load static %}
+{% include 'header.html' %}
+
+<main class="dashboard-content">
+  <div class="container-fluid px-3 px-lg-4 py-4">
+
+    <!-- ===== PAGE HEADING ===== -->
+    <div class="page-heading">
+      <div class="page-heading-copy">
+        <span class="page-icon"><i class="bi bi-people-fill" aria-hidden="true"></i></span>
+        <div>
+          <p class="eyebrow mb-1">Student Management</p>
+          <h1 class="h3 mb-1">🎓 Student Profiles & No Due Status</h1>
+          <p class="text-muted mb-0">View all students with their current academic, financial, and No Due status.</p>
+        </div>
+      </div>
+      <div class="heading-actions">
+        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="window.print()">
+          <i class="bi bi-download" aria-hidden="true"></i> Export Report
+        </button>
+        <a class="btn btn-primary btn-sm" href="add-student.html">
+          <i class="bi bi-person-plus" aria-hidden="true"></i> Add Student
+        </a>
+      </div>
+    </div>
+
+    <!-- ===== FILTERS / SEARCH ===== -->
+    <div class="panel mb-3">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input class="form-control" type="text" placeholder="Search by name, reg no, or department..." id="searchStudent">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" id="filterYear">
+            <option value="">All Years</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year (Final)</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" id="filterStatus">
+            <option value="">All Status</option>
+            <option value="clear">✅ No Due</option>
+            <option value="partial">🟡 Partial</option>
+            <option value="pending">🔴 Pending</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" id="filterDepartment">
+            <option value="">All Departments</option>
+            <option value="cse">CSE</option>
+            <option value="it">IT</option>
+            <option value="ece">ECE</option>
+            <option value="eee">EEE</option>
+            <option value="mech">MECH</option>
+            <option value="civil">CIVIL</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <span class="text-muted small" id="studentCount">Showing 20 students</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STUDENT STATS ===== -->
+    <section class="row g-3 mb-3">
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card metric-success" style="border-left:4px solid #28a745;">
+          <div class="metric-top">
+            <span class="metric-label">✅ No Due Completed</span>
+            <span class="metric-icon"><i class="bi bi-check-circle-fill text-success"></i></span>
+          </div>
+          <div class="metric-value">12</div>
+          <div class="metric-meta"><span class="text-success">60%</span> of total students</div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card metric-warning" style="border-left:4px solid #ffc107;">
+          <div class="metric-top">
+            <span class="metric-label">🟡 Partial / In Progress</span>
+            <span class="metric-icon"><i class="bi bi-clock-history text-warning"></i></span>
+          </div>
+          <div class="metric-value">5</div>
+          <div class="metric-meta"><span class="text-warning">25%</span> need attention</div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card metric-danger" style="border-left:4px solid #dc3545;">
+          <div class="metric-top">
+            <span class="metric-label">🔴 Pending / Blocked</span>
+            <span class="metric-icon"><i class="bi bi-x-circle-fill text-danger"></i></span>
+          </div>
+          <div class="metric-value">3</div>
+          <div class="metric-meta"><span class="text-danger">15%</span> need immediate action</div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card metric-primary" style="border-left:4px solid #0d6efd;">
+          <div class="metric-top">
+            <span class="metric-label">📚 Total Students</span>
+            <span class="metric-icon"><i class="bi bi-people text-primary"></i></span>
+          </div>
+          <div class="metric-value">20</div>
+          <div class="metric-meta"><span>Active students</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== STUDENT PROFILES GRID ===== -->
+    <section class="row g-3" id="studentGrid">
+
+      <!-- ===== STUDENT 1 - No Due Clear ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="clear" data-dept="cse">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#4e73df,#224abe);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#4e73df,#224abe);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(78,115,223,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Kumaravel S</h6>
+            <p class="text-muted small">21CS101 • CSE (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.7</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">92%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">13/13</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#profileModal1">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 2 - No Due Clear ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="clear" data-dept="cse">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#28a745,#1e7e34);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#28a745,#1e7e34);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(40,167,69,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Priya R</h6>
+            <p class="text-muted small">21CS102 • CSE (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 9.2</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">95%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">13/13</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 3 - No Due Clear ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="clear" data-dept="it">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#17a2b8,#0f7c8f);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#17a2b8,#0f7c8f);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(23,162,184,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Arun K</h6>
+            <p class="text-muted small">21IT101 • IT (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.4</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">88%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">12/13</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 4 - No Due Clear ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="3" data-status="clear" data-dept="ece">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#e83e8c,#c8236a);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#e83e8c,#c8236a);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(232,62,140,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Deepa M</h6>
+            <p class="text-muted small">22ECE101 • ECE (3rd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.9</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">91%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">12/12</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 5 - No Due Clear ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="clear" data-dept="cse">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#fd7e14,#e66b0b);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#fd7e14,#e66b0b);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(253,126,20,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Suresh P</h6>
+            <p class="text-muted small">21CS103 • CSE (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 7.8</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">86%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">13/13</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 6 - No Due Clear ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="3" data-status="clear" data-dept="mech">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#20c997,#14977a);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#20c997,#14977a);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(32,201,151,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Rahul T</h6>
+            <p class="text-muted small">22ME101 • MECH (3rd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.1</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">83%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">11/12</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 7 - Partial (Library Pending) ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="partial" data-dept="cse">
+        <div class="panel h-100 profile-card" style="border-left:4px solid #ffc107;">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#ffc107,#d39e00);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#ffc107,#d39e00);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(255,193,7,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Ananya V</h6>
+            <p class="text-muted small">21CS104 • CSE (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-warning">🟡 Partial</span>
+              <span class="badge text-bg-primary">CGPA: 8.3</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">89%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">12/13</p></div>
+            <div class="col-4"><span class="text-muted small">Library</span><p class="fw-bold mb-0 text-warning">⚠️ Pending</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-warning btn-sm">⚠️ 2 Books Pending</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 8 - Partial (Fee Pending) ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="3" data-status="partial" data-dept="ece">
+        <div class="panel h-100 profile-card" style="border-left:4px solid #ffc107;">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#ffc107,#d39e00);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#ffc107,#d39e00);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(255,193,7,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Vikram S</h6>
+            <p class="text-muted small">22ECE102 • ECE (3rd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-warning">🟡 Partial</span>
+              <span class="badge text-bg-primary">CGPA: 7.5</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-warning">76%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">11/12</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-danger">🔴 Pending</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-warning btn-sm">💰 Fee Pending ₹5,000</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 9 - Partial (Hostel Pending) ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="2" data-status="partial" data-dept="it">
+        <div class="panel h-100 profile-card" style="border-left:4px solid #ffc107;">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#ffc107,#d39e00);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#ffc107,#d39e00);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(255,193,7,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Divya K</h6>
+            <p class="text-muted small">23IT101 • IT (2nd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-warning">🟡 Partial</span>
+              <span class="badge text-bg-primary">CGPA: 8.0</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">84%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">10/11</p></div>
+            <div class="col-4"><span class="text-muted small">Hostel</span><p class="fw-bold mb-0 text-warning">⚠️ Pending</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-warning btn-sm">🏠 Hostel Dues Pending</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 10 - Partial (Lab Equipment) ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="3" data-status="partial" data-dept="cse">
+        <div class="panel h-100 profile-card" style="border-left:4px solid #ffc107;">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#ffc107,#d39e00);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#ffc107,#d39e00);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(255,193,7,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Manoj B</h6>
+            <p class="text-muted small">22CS101 • CSE (3rd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-warning">🟡 Partial</span>
+              <span class="badge text-bg-primary">CGPA: 7.9</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">81%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">12/12</p></div>
+            <div class="col-4"><span class="text-muted small">Lab</span><p class="fw-bold mb-0 text-warning">⚠️ Pending</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-warning btn-sm">🔬 Arduino Kit Not Returned</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 11 - Partial (Assignment Pending) ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="2" data-status="partial" data-dept="ece">
+        <div class="panel h-100 profile-card" style="border-left:4px solid #ffc107;">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#ffc107,#d39e00);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#ffc107,#d39e00);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(255,193,7,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Nisha C</h6>
+            <p class="text-muted small">23ECE101 • ECE (2nd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-warning">🟡 Partial</span>
+              <span class="badge text-bg-primary">CGPA: 7.6</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">87%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-danger">8/11 ❌</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-warning btn-sm">📝 3 Assignments Pending</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 12 - Pending / Blocked (Multiple Issues) ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="pending" data-dept="cse">
+        <div class="panel h-100 profile-card" style="border-left:4px solid #dc3545;">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#dc3545,#bd2130);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#bd2130);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(220,53,69,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Karthik R</h6>
+            <p class="text-muted small">21CS105 • CSE (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-danger">🔴 Blocked</span>
+              <span class="badge text-bg-primary">CGPA: 6.8</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-danger">68% ❌</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-danger">9/13 ❌</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-danger">🔴 Pending</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-danger btn-sm">⚠️ Immediate Action Required</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 13 - Pending ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="3" data-status="pending" data-dept="mech">
+        <div class="panel h-100 profile-card" style="border-left:4px solid #dc3545;">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#dc3545,#bd2130);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#bd2130);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(220,53,69,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Ganesh L</h6>
+            <p class="text-muted small">22ME102 • MECH (3rd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-danger">🔴 Pending</span>
+              <span class="badge text-bg-primary">CGPA: 7.0</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-warning">73%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-danger">8/12 ❌</p></div>
+            <div class="col-4"><span class="text-muted small">Backlog</span><p class="fw-bold mb-0 text-danger">🔴 2 Arrears</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-danger btn-sm">⚠️ 2 Backlogs Pending</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 14 - Pending ===== -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="2" data-status="pending" data-dept="civil">
+        <div class="panel h-100 profile-card" style="border-left:4px solid #dc3545;">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#dc3545,#bd2130);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#bd2130);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(220,53,69,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Sindhu N</h6>
+            <p class="text-muted small">23CV101 • CIVIL (2nd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-danger">🔴 Pending</span>
+              <span class="badge text-bg-primary">CGPA: 6.5</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-danger">65% ❌</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-danger">7/11 ❌</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-danger">🔴 Pending</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-danger btn-sm">🚨 Attendance + Fee Pending</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STUDENT 15 to 20 - No Due Clear ===== -->
+      <!-- STUDENT 15 -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="clear" data-dept="it">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#6f42c1,#55309e);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#6f42c1,#55309e);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(111,66,193,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Meera R</h6>
+            <p class="text-muted small">21IT102 • IT (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 9.0</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">93%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">13/13</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT 16 -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="3" data-status="clear" data-dept="cse">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#0d6efd,#0a58ca);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#0d6efd,#0a58ca);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(13,110,253,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Jai S</h6>
+            <p class="text-muted small">22CS102 • CSE (3rd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.6</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">90%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">12/12</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT 17 -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="clear" data-dept="ece">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#e83e8c,#c8236a);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#e83e8c,#c8236a);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(232,62,140,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Lakshmi K</h6>
+            <p class="text-muted small">21ECE103 • ECE (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.8</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">94%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">13/13</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT 18 -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="2" data-status="clear" data-dept="mech">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#20c997,#14977a);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#20c997,#14977a);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(32,201,151,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Prakash D</h6>
+            <p class="text-muted small">23ME103 • MECH (2nd Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.2</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">87%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">11/11</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT 19 -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="4" data-status="clear" data-dept="civil">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#fd7e14,#e66b0b);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#fd7e14,#e66b0b);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(253,126,20,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Swathi P</h6>
+            <p class="text-muted small">21CV102 • CIVIL (4th Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.5</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">89%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">13/13</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT 20 -->
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-3 student-card" data-year="1" data-status="clear" data-dept="cse">
+        <div class="panel h-100 profile-card">
+          <div class="profile-cover" style="background:linear-gradient(135deg,#17a2b8,#0f7c8f);height:80px;"></div>
+          <div class="text-center" style="margin-top:-40px;">
+            <div class="avatar-circle" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#17a2b8,#0f7c8f);display:inline-flex;align-items:center;justify-content:center;font-size:32px;color:#fff;border:3px solid #fff;box-shadow:0 4px 15px rgba(23,162,184,0.3);">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h6 class="mt-2 mb-0">Aravind V</h6>
+            <p class="text-muted small">24CS101 • CSE (1st Year)</p>
+            <div class="d-flex justify-content-center gap-1 flex-wrap">
+              <span class="badge text-bg-success">✅ No Due</span>
+              <span class="badge text-bg-primary">CGPA: 8.9</span>
+            </div>
+          </div>
+          <hr>
+          <div class="row g-1 text-center">
+            <div class="col-4"><span class="text-muted small">Attendance</span><p class="fw-bold mb-0 text-success">91%</p></div>
+            <div class="col-4"><span class="text-muted small">Assignments</span><p class="fw-bold mb-0 text-success">10/10</p></div>
+            <div class="col-4"><span class="text-muted small">Fee</span><p class="fw-bold mb-0 text-success">✅ Paid</p></div>
+          </div>
+          <hr>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-primary btn-sm">View Full Profile</button>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- end student grid -->
+
+    <!-- ===== BOTTOM STATS ===== -->
+    <section class="panel mt-3" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); color: #fff; border: none;">
+      <div class="panel-header d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+          <h5 class="mb-0">📊 No Due Summary Report</h5>
+          <small class="text-white-50">Academic Year 2025-2026</small>
+        </div>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <span class="badge bg-success text-white px-3 py-2">✅ 12 No Due</span>
+          <span class="badge bg-warning text-dark px-3 py-2">🟡 5 Partial</span>
+          <span class="badge bg-danger text-white px-3 py-2">🔴 3 Pending</span>
+        </div>
+      </div>
+      <div class="row g-2 px-3 pb-3">
+        <div class="col-12">
+          <div class="progress" style="height:10px;">
+            <div class="progress-bar bg-success" style="width:60%;">60%</div>
+            <div class="progress-bar bg-warning" style="width:25%;">25%</div>
+            <div class="progress-bar bg-danger" style="width:15%;">15%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ===== SAMPLE PROFILE MODAL ===== -->
+<div class="modal fade" id="profileModal1" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">🎓 Student Full Profile</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4 text-center">
+            <div class="avatar-circle" style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#4e73df,#224abe);display:inline-flex;align-items:center;justify-content:center;font-size:48px;color:#fff;margin:0 auto;">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <h5 class="mt-2">Kumaravel S</h5>
+            <p class="text-muted">21CS101 • CSE (4th Year)</p>
+            <span class="badge text-bg-success">✅ No Due</span>
+          </div>
+          <div class="col-md-8">
+            <h6>📋 Academic Details</h6>
+            <div class="row g-2">
+              <div class="col-6"><span class="text-muted small">CGPA</span><p class="fw-bold">8.7</p></div>
+              <div class="col-6"><span class="text-muted small">Attendance</span><p class="fw-bold text-success">92%</p></div>
+              <div class="col-6"><span class="text-muted small">Assignments</span><p class="fw-bold text-success">13/13 ✅</p></div>
+              <div class="col-6"><span class="text-muted small">Backlogs</span><p class="fw-bold text-success">0</p></div>
+            </div>
+            <hr>
+            <h6>💰 Financial Status</h6>
+            <div class="row g-2">
+              <div class="col-6"><span class="text-muted small">Tuition Fee</span><p class="fw-bold text-success">✅ Paid</p></div>
+              <div class="col-6"><span class="text-muted small">Library</span><p class="fw-bold text-success">✅ No Dues</p></div>
+              <div class="col-6"><span class="text-muted small">Hostel</span><p class="fw-bold text-success">✅ No Dues</p></div>
+              <div class="col-6"><span class="text-muted small">Lab Equipment</span><p class="fw-bold text-success">✅ Returned</p></div>
+            </div>
+            <hr>
+            <div class="alert alert-success">🎉 This student is fully eligible for No Due Certificate!</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-success btn-sm"><i class="bi bi-download"></i> Generate No Due</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FILTER SCRIPT ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('searchStudent');
+  const filterYear = document.getElementById('filterYear');
+  const filterStatus = document.getElementById('filterStatus');
+  const filterDept = document.getElementById('filterDepartment');
+  const studentCards = document.querySelectorAll('.student-card');
+  const studentCount = document.getElementById('studentCount');
+
+  function filterStudents() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const year = filterYear.value;
+    const status = filterStatus.value;
+    const dept = filterDept.value;
+    let visible = 0;
+
+    studentCards.forEach(card => {
+      const cardYear = card.dataset.year;
+      const cardStatus = card.dataset.status;
+      const cardDept = card.dataset.dept;
+      const cardText = card.textContent.toLowerCase();
+
+      let show = true;
+
+      if (year && cardYear !== year) show = false;
+      if (status && cardStatus !== status) show = false;
+      if (dept && cardDept !== dept) show = false;
+      if (searchTerm && !cardText.includes(searchTerm)) show = false;
+
+      if (show) {
+        card.style.display = '';
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    studentCount.textContent = `Showing ${visible} students`;
+  }
+
+  searchInput.addEventListener('keyup', filterStudents);
+  filterYear.addEventListener('change', filterStudents);
+  filterStatus.addEventListener('change', filterStudents);
+  filterDept.addEventListener('change', filterStudents);
+});
+</script>
+
+{% include 'footer.html' %}

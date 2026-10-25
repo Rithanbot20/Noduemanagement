@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSMIET · No Due Management · Home</title>
+  <!-- Bootstrap 5 + Icons + custom HiFi touch -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: blue; }
+    .hifi-primary { color: #0b2b4a; }
+    .hifi-bg-primary { background: #0b2b4a; }
+    .hifi-accent { color: #f5a623; }
+    .hifi-bg-accent { background: #f5a623; }
+    .btn-hifi { background: #f5a623; border: none; color: #0b2b4a; font-weight: 600; }
+    .btn-hifi:hover { background: #e09515; color: #0b2b4a; }
+    .btn-outline-hifi { border: 2px solid #f5a623; color: #f5a623; font-weight: 600; }
+    .btn-outline-hifi:hover { background: #f5a623; color: #0b2b4a; }
+    .card-hifi { border: none; border-radius: 24px; box-shadow: 0 20px 40px -12px rgba(11,43,74,0.15); transition: 0.25s ease; }
+    .card-hifi:hover { transform: translateY(-4px); box-shadow: 0 28px 48px -16px rgba(11,43,74,0.2); }
+    .navbar-hifi { background: #0b2b4a; backdrop-filter: blur(4px); }
+    .nav-link-hifi { color: rgba(255,255,255,0.8) !important; font-weight: 500; padding: 0.6rem 1.2rem !important; border-radius: 40px; }
+    .nav-link-hifi:hover { color: #f5a623 !important; background: rgba(245,166,35,0.08); }
+    .nav-link-hifi.active { color: #f5a623 !important; background: rgba(245,166,35,0.12); }
+    .hero-section { background+: linear-gradient(145deg, #0b2b4a 0%, #1a3f5e 100%); border-radius: 0 0 48px 48px; }
+    .hero-title { font-weight: 700; letter-spacing: -0.02em; }
+    .badge-hifi { background: #f5a62320; color: #f5a623; font-weight: 600; padding: 0.4rem 1.2rem; border-radius: 40px; border: 1px solid #f5a62340; }
+    .footer-hifi { background: #0b2b4a; border-radius: 48px 48px 0 0; }
+    .icon-box { width: 56px; height: 56px; background: #f5a62310; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #f5a623; font-size: 1.8rem; }
+    @media (max-width: 576px) { .hero-title { font-size: 2.2rem; } }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar navbar-expand-lg navbar-hifi py-3 px-3 px-lg-5">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white fw-bold fs-4 d-flex align-items-center gap-2" href="home.html">
+        <i class="bi bi-mortarboard-fill" style="color: #f5a623;"></i> SSMIET <span style="font-weight: 300; color: #f5a623;">·</span> No Due
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+      </button>
+     
+      {% include 'menu_page.html' %}
+    </div>
+  </nav>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="hero-section px-3 px-lg-5 pt-5 pb-5 mb-4">
+    <div class="container py-4">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7 text-white">
+          <span class="badge-hifi d-inline-block mb-3"><i class="bi bi-check-circle-fill me-1"></i> No Due · SSMIET</span>
+          <h1 class="hero-title display-3 fw-bold mb-3">Streamline your <span style="color: #f5a623;">No Due</span> process</h1>
+          <p class="lead opacity-75" style="max-width: 600px;">Complete your clearances, track dues, and get your final nod — all in one high‑fidelity dashboard built for SSMIET.</p>
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <a href="{% url 'registerpage' %}" class="btn btn-hifi btn-lg px-5 rounded-pill"><i class="bi bi-person-plus me-2"></i> Get Started</a>
+            <a href="/admin/" class="btn btn-outline-light btn-lg px-5 rounded-pill"><i class="bi bi-shield-lock me-2"></i> Admin</a>
+          </div>
+          <div class="mt-4 d-flex gap-4 text-white-50 small">
+            <span><i class="bi bi-check-circle-fill text-success me-1"></i> 100% digital</span>
+            <span><i class="bi bi-clock me-1"></i> real‑time updates</span>
+            <span><i class="bi bi-shield-fill me-1"></i> secure</span>
+          </div>
+        </div>
+        <div class="col-lg-5 d-none d-lg-block text-end">
+          <div class="bg-white bg-opacity-10 p-4 rounded-4" style="backdrop-filter: blur(4px);">
+            <i class="bi bi-mortarboard-fill display-1" style="color: #f5a623;"></i>
+            <p class="text-white-50 mt-2">SSMIET · No Due Management</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FEATURE CARDS ========== -->
+  <div class="container px-3 px-lg-5 mb-5">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card card-hifi p-4 h-100">
+          <div class="icon-box mb-3"><i class="bi bi-person-badge"></i></div>
+          <h5 class="fw-bold hifi-primary">Student Clearance</h5>
+          <p class="text-secondary">View pending dues, library, hostel, department clearances in a single place.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-hifi p-4 h-100">
+          <div class="icon-box mb-3"><i class="bi bi-diagram-3"></i></div>
+          <h5 class="fw-bold hifi-primary">Department Workflow</h5>
+          <p class="text-secondary">HODs and coordinators can verify and mark clearances instantly.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-hifi p-4 h-100">
+          <div class="icon-box mb-3"><i class="bi bi-bar-chart-fill"></i></div>
+          <h5 class="fw-bold hifi-primary">Real‑time Status</h5>
+          <p class="text-secondary">Track every step: from application to final No Due certificate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== STATS / EXTRA SECTION ========== -->
+  <div class="container px-3 px-lg-5 mb-5">
+    <div class="row g-4 text-center">
+      <div class="col-6 col-md-3">
+        <div class="bg-white p-4 rounded-4 shadow-sm">
+          <h2 class="display-5 fw-bold hifi-primary">500+</h2>
+          <p class="text-secondary">Clearances processed</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="bg-white p-4 rounded-4 shadow-sm">
+          <h2 class="display-5 fw-bold hifi-primary">98%</h2>
+          <p class="text-secondary">Satisfaction rate</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="bg-white p-4 rounded-4 shadow-sm">
+          <h2 class="display-5 fw-bold hifi-primary">12</h2>
+          <p class="text-secondary">Departments</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="bg-white p-4 rounded-4 shadow-sm">
+          <h2 class="display-5 fw-bold hifi-primary">24/7</h2>
+          <p class="text-secondary">Accessibility</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+{% include 'footer_page.html' %}

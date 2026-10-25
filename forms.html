@@ -1,0 +1,630 @@
+{% load static %}
+{% include 'header.html' %}
+
+<main class="dashboard-content">
+  <div class="container-fluid px-3 px-lg-4 py-4">
+
+    <!-- ===== PAGE HEADING ===== -->
+    <div class="page-heading">
+      <div class="page-heading-copy">
+        <span class="page-icon"><i class="bi bi-file-check-fill" aria-hidden="true"></i></span>
+        <div>
+          <p class="eyebrow mb-1">Student Services</p>
+          <h1 class="h3 mb-1">🎓 No Due Certificate Application</h1>
+          <p class="text-muted mb-0">Apply for your No Due Certificate - Complete all fields and submit.</p>
+        </div>
+      </div>
+      <div class="heading-actions">
+        <a class="btn btn-outline-secondary btn-sm" href="dashboard.html">
+          <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+
+    <!-- ===== APPLICATION STATUS ===== -->
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+      <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+      <strong>📌 Important:</strong> Please ensure all academic and financial dues are cleared before applying.
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== MAIN FORM ===== -->
+    <!-- ============================================================ -->
+    <section class="row g-3">
+      <div class="col-12 col-xl-8">
+
+        <!-- ===== NO DUE APPLICATION FORM ===== -->
+        <form class="panel needs-validation" novalidate id="noDueForm">
+          <div class="panel-header">
+            <div>
+              <h2 class="h5 mb-1 section-title">
+                <i class="bi bi-clipboard-check" aria-hidden="true"></i>
+                <span>📋 No Due Application Form</span>
+              </h2>
+              <p class="text-muted mb-0">Fill in all details to apply for No Due Certificate.</p>
+            </div>
+            <span class="badge bg-primary rounded-pill">Required *</span>
+          </div>
+
+          <div class="row g-3">
+
+            <!-- ===== STUDENT PERSONAL INFORMATION ===== -->
+            <div class="col-12">
+              <h6 class="text-primary mb-2"><i class="bi bi-person-badge"></i> Personal Information</h6>
+              <hr class="mt-0">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="fullName">Full Name <span class="text-danger">*</span></label>
+              <input class="form-control" id="fullName" type="text" placeholder="e.g., Kumaravel S" required>
+              <div class="invalid-feedback">Full name is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="regNo">Register Number <span class="text-danger">*</span></label>
+              <input class="form-control" id="regNo" type="text" placeholder="e.g., 21CS101" required>
+              <div class="invalid-feedback">Register number is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="studentEmail">Email Address <span class="text-danger">*</span></label>
+              <input class="form-control" id="studentEmail" type="email" placeholder="student@example.com" required>
+              <div class="invalid-feedback">Enter a valid email.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="studentPhone">Phone Number <span class="text-danger">*</span></label>
+              <input class="form-control" id="studentPhone" type="tel" placeholder="+91 9876543210" required>
+              <div class="invalid-feedback">Phone number is required.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label" for="studentDept">Department <span class="text-danger">*</span></label>
+              <select class="form-select" id="studentDept" required>
+                <option value="">Select Department</option>
+                <option value="cse">Computer Science (CSE)</option>
+                <option value="it">Information Technology (IT)</option>
+                <option value="ece">Electronics & Communication (ECE)</option>
+                <option value="eee">Electrical & Electronics (EEE)</option>
+                <option value="mech">Mechanical (MECH)</option>
+                <option value="civil">Civil (CIVIL)</option>
+              </select>
+              <div class="invalid-feedback">Department is required.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label" for="studentYear">Year <span class="text-danger">*</span></label>
+              <select class="form-select" id="studentYear" required>
+                <option value="">Select Year</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year (Final)</option>
+              </select>
+              <div class="invalid-feedback">Year is required.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label" for="studentSemester">Semester <span class="text-danger">*</span></label>
+              <select class="form-select" id="studentSemester" required>
+                <option value="">Select Semester</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+              </select>
+              <div class="invalid-feedback">Semester is required.</div>
+            </div>
+
+            <!-- ===== ACADEMIC CLEARANCE ===== -->
+            <div class="col-12 mt-2">
+              <h6 class="text-success mb-2"><i class="bi bi-check-circle"></i> Academic Clearance</h6>
+              <hr class="mt-0">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="assignmentsStatus">Assignments Completed? <span class="text-danger">*</span></label>
+              <select class="form-select" id="assignmentsStatus" required>
+                <option value="">Select Status</option>
+                <option value="yes">✅ Yes - All Submitted</option>
+                <option value="no">❌ No - Pending</option>
+                <option value="partial">🟡 Partial - Some Pending</option>
+              </select>
+              <div class="invalid-feedback">Please select a status.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="attendanceStatus">Attendance ≥ 75%? <span class="text-danger">*</span></label>
+              <select class="form-select" id="attendanceStatus" required>
+                <option value="">Select Status</option>
+                <option value="yes">✅ Yes</option>
+                <option value="no">❌ No</option>
+                <option value="medical">🟡 Medical Certificate Submitted</option>
+              </select>
+              <div class="invalid-feedback">Please select a status.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="internalsStatus">All Internal Tests Passed? <span class="text-danger">*</span></label>
+              <select class="form-select" id="internalsStatus" required>
+                <option value="">Select Status</option>
+                <option value="yes">✅ Yes - All Passed</option>
+                <option value="no">❌ No - Some Failed</option>
+              </select>
+              <div class="invalid-feedback">Please select a status.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="backlogsStatus">Any Backlogs / Arrears? <span class="text-danger">*</span></label>
+              <select class="form-select" id="backlogsStatus" required>
+                <option value="">Select Status</option>
+                <option value="none">✅ None - All Cleared</option>
+                <option value="pending">🔴 Pending - Arrears Exist</option>
+              </select>
+              <div class="invalid-feedback">Please select a status.</div>
+            </div>
+
+            <!-- ===== FINANCIAL CLEARANCE ===== -->
+            <div class="col-12 mt-2">
+              <h6 class="text-warning mb-2"><i class="bi bi-wallet2"></i> Financial Clearance</h6>
+              <hr class="mt-0">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="feeStatus">Tuition Fee Status <span class="text-danger">*</span></label>
+              <select class="form-select" id="feeStatus" required>
+                <option value="">Select Status</option>
+                <option value="paid">✅ Fully Paid</option>
+                <option value="partial">🟡 Partial Paid</option>
+                <option value="pending">🔴 Pending</option>
+              </select>
+              <div class="invalid-feedback">Fee status is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="libraryStatus">Library Status <span class="text-danger">*</span></label>
+              <select class="form-select" id="libraryStatus" required>
+                <option value="">Select Status</option>
+                <option value="clear">✅ No Dues - All Books Returned</option>
+                <option value="pending">⚠️ Books Pending</option>
+                <option value="fine">💰 Fine Pending</option>
+              </select>
+              <div class="invalid-feedback">Library status is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="hostelStatus">Hostel / Mess Dues</label>
+              <select class="form-select" id="hostelStatus">
+                <option value="na">Not Applicable</option>
+                <option value="clear">✅ No Dues</option>
+                <option value="pending">⚠️ Dues Pending</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label" for="labEquipment">Lab Equipment Returned?</label>
+              <select class="form-select" id="labEquipment">
+                <option value="clear">✅ All Returned</option>
+                <option value="pending">⚠️ Pending Return</option>
+                <option value="na">Not Applicable</option>
+              </select>
+            </div>
+
+            <!-- ===== DECLARATION ===== -->
+            <div class="col-12 mt-2">
+              <h6 class="text-danger mb-2"><i class="bi bi-shield-check"></i> Declaration</h6>
+              <hr class="mt-0">
+            </div>
+
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="declarationCheck" required>
+                <label class="form-check-label" for="declarationCheck">
+                  I hereby declare that all the information provided above is true and correct. 
+                  I have cleared all academic and financial dues. <span class="text-danger">*</span>
+                </label>
+                <div class="invalid-feedback">You must agree to the declaration.</div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label" for="remarks">Additional Remarks / Notes</label>
+              <textarea class="form-control" id="remarks" rows="3" placeholder="Any additional information or special requests..."></textarea>
+            </div>
+
+          </div>
+
+          <!-- ===== FORM ACTIONS ===== -->
+          <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
+            <button class="btn btn-outline-secondary" type="reset">
+              <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Clear All
+            </button>
+            <button class="btn btn-warning" type="button" onclick="checkEligibility()">
+              <i class="bi bi-check-circle" aria-hidden="true"></i> Check Eligibility
+            </button>
+            <button class="btn btn-success" type="submit" id="submitBtn">
+              <i class="bi bi-send" aria-hidden="true"></i> Submit Application
+            </button>
+          </div>
+
+          <!-- ===== ELIGIBILITY RESULT ===== -->
+          <div id="eligibilityResult" class="mt-3" style="display:none;"></div>
+
+        </form>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- ===== RIGHT SIDEBAR ===== -->
+      <!-- ============================================================ -->
+      <div class="col-12 col-xl-4">
+
+        <!-- Quick Status Card -->
+        <div class="panel h-100">
+          <div class="panel-header">
+            <h2 class="h5 mb-1 section-title">
+              <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+              <span>ℹ️ Application Guide</span>
+            </h2>
+            <p class="text-muted mb-0">Follow these steps to apply.</p>
+          </div>
+
+          <div class="activity-list">
+            <div class="activity-item">
+              <span class="activity-dot bg-primary"></span>
+              <div>
+                <p class="mb-1 fw-semibold">1. Fill Personal Details</p>
+                <p class="text-muted small mb-0">Name, Reg No, Department, Year, Semester</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot bg-success"></span>
+              <div>
+                <p class="mb-1 fw-semibold">2. Academic Clearance</p>
+                <p class="text-muted small mb-0">Assignments, Attendance, Internals, Backlogs</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot bg-warning"></span>
+              <div>
+                <p class="mb-1 fw-semibold">3. Financial Clearance</p>
+                <p class="text-muted small mb-0">Fee, Library, Hostel, Lab Equipment</p>
+              </div>
+            </div>
+            <div class="activity-item">
+              <span class="activity-dot bg-danger"></span>
+              <div>
+                <p class="mb-1 fw-semibold">4. Accept & Submit</p>
+                <p class="text-muted small mb-0">Read declaration and submit application</p>
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Quick Stats -->
+          <div class="mt-2">
+            <div class="d-flex justify-content-between">
+              <span class="text-muted small">Total Applications</span>
+              <span class="fw-semibold">1,284</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted small">✅ Approved</span>
+              <span class="fw-semibold text-success">1,120</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted small">🔄 Pending Review</span>
+              <span class="fw-semibold text-warning">104</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted small">❌ Rejected</span>
+              <span class="fw-semibold text-danger">60</span>
+            </div>
+            <div class="progress mt-2" style="height:6px;">
+              <div class="progress-bar bg-success" style="width:87%;"></div>
+              <div class="progress-bar bg-warning" style="width:8%;"></div>
+              <div class="progress-bar bg-danger" style="width:5%;"></div>
+            </div>
+            <p class="text-muted small mt-1">87% Approval Rate</p>
+          </div>
+
+          <hr>
+
+          <!-- Download Button -->
+          <div class="d-grid gap-2 mt-2">
+            <button class="btn btn-outline-primary btn-sm" type="button">
+              <i class="bi bi-download"></i> Download Application Form
+            </button>
+            <button class="btn btn-outline-info btn-sm" type="button">
+              <i class="bi bi-file-pdf"></i> View Sample No Due Certificate
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ============================================================ -->
+<!-- ===== SUCCESS MODAL ===== -->
+<!-- ============================================================ -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">🎉 Application Submitted Successfully!</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <i class="bi bi-check-circle-fill text-success" style="font-size:64px;"></i>
+        <h5 class="mt-3" id="successName">Kumaravel S</h5>
+        <p class="text-muted" id="successReg">Reg No: 21CS101</p>
+        <div class="alert alert-success">
+          <i class="bi bi-info-circle"></i>
+          Your No Due Certificate application has been submitted successfully.
+          <br>
+          <small>Application ID: <strong id="appId">ND-2026-001</strong></small>
+        </div>
+        <p class="text-muted small">You will receive a confirmation email within 24 hours.</p>
+        <hr>
+        <div class="row g-2">
+          <div class="col-6">
+            <span class="text-muted small">Department</span>
+            <p class="fw-semibold mb-0" id="successDept">CSE</p>
+          </div>
+          <div class="col-6">
+            <span class="text-muted small">Year</span>
+            <p class="fw-semibold mb-0" id="successYear">4th Year (Final)</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        <a class="btn btn-primary btn-sm" href="no-due-status.html">
+          <i class="bi bi-speedometer2"></i> Check Status
+        </a>
+        <button class="btn btn-success btn-sm" onclick="window.print()">
+          <i class="bi bi-download"></i> Download Receipt
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ===== ERROR MODAL ===== -->
+<!-- ============================================================ -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">⚠️ Eligibility Check Failed</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:64px;"></i>
+        <h5 class="mt-3">You are not eligible for No Due Certificate!</h5>
+        <div class="alert alert-danger text-start mt-3" id="errorDetails">
+          <strong>Please clear the following pending items:</strong>
+          <ul class="mt-2" id="errorList">
+            <li>📚 Pending Assignments</li>
+            <li>💰 Fee Pending</li>
+            <li>📖 Library Books Not Returned</li>
+          </ul>
+        </div>
+        <p class="text-muted small">Please clear all dues and try again.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        <button class="btn btn-warning btn-sm" onclick="window.location.href='clear-dues.html'">
+          <i class="bi bi-check-circle"></i> Clear Dues
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ===== SCRIPTS ===== -->
+<!-- ============================================================ -->
+<script>
+// ============================================================
+// ELIGIBILITY CHECK FUNCTION
+// ============================================================
+function checkEligibility() {
+  // Get all values
+  const assignments = document.getElementById('assignmentsStatus').value;
+  const attendance = document.getElementById('attendanceStatus').value;
+  const internals = document.getElementById('internalsStatus').value;
+  const backlogs = document.getElementById('backlogsStatus').value;
+  const fee = document.getElementById('feeStatus').value;
+  const library = document.getElementById('libraryStatus').value;
+  const hostel = document.getElementById('hostelStatus').value;
+  const lab = document.getElementById('labEquipment').value;
+
+  const errors = [];
+
+  // Check Academic
+  if (assignments === 'no' || assignments === 'partial') {
+    errors.push('📚 Pending Assignments');
+  }
+  if (attendance === 'no') {
+    errors.push('📅 Attendance below 75%');
+  }
+  if (internals === 'no') {
+    errors.push('📝 Internal Tests Failed');
+  }
+  if (backlogs === 'pending') {
+    errors.push('🔴 Backlogs / Arrears Pending');
+  }
+
+  // Check Financial
+  if (fee === 'pending' || fee === 'partial') {
+    errors.push('💰 Tuition Fee Pending');
+  }
+  if (library === 'pending' || library === 'fine') {
+    errors.push('📖 Library Dues Pending');
+  }
+  if (hostel === 'pending') {
+    errors.push('🏠 Hostel / Mess Dues Pending');
+  }
+  if (lab === 'pending') {
+    errors.push('🔬 Lab Equipment Not Returned');
+  }
+
+  const resultDiv = document.getElementById('eligibilityResult');
+
+  if (errors.length === 0) {
+    // All clear - Eligible
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `
+      <div class="alert alert-success">
+        <i class="bi bi-check-circle-fill" style="font-size:24px;"></i>
+        <strong>🎉 Congratulations! You are eligible for No Due Certificate!</strong>
+        <br>
+        <small>All academic and financial dues are cleared. You can proceed with the application.</small>
+      </div>
+    `;
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    // Not eligible
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `
+      <div class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle-fill" style="font-size:24px;"></i>
+        <strong>⚠️ You are not eligible for No Due Certificate!</strong>
+        <br>
+        <small>Please clear the following pending items:</small>
+        <ul class="mt-2">
+          ${errors.map(err => `<li>${err}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// ============================================================
+// FORM SUBMISSION
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('noDueForm');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Check if form is valid
+    if (form.checkValidity() === false) {
+      form.classList.add('was-validated');
+      return;
+    }
+
+    // Check eligibility first
+    const assignments = document.getElementById('assignmentsStatus').value;
+    const attendance = document.getElementById('attendanceStatus').value;
+    const internals = document.getElementById('internalsStatus').value;
+    const backlogs = document.getElementById('backlogsStatus').value;
+    const fee = document.getElementById('feeStatus').value;
+    const library = document.getElementById('libraryStatus').value;
+    const hostel = document.getElementById('hostelStatus').value;
+    const lab = document.getElementById('labEquipment').value;
+
+    const errors = [];
+    if (assignments === 'no' || assignments === 'partial') errors.push('Assignments');
+    if (attendance === 'no') errors.push('Attendance');
+    if (internals === 'no') errors.push('Internals');
+    if (backlogs === 'pending') errors.push('Backlogs');
+    if (fee === 'pending' || fee === 'partial') errors.push('Fee');
+    if (library === 'pending' || library === 'fine') errors.push('Library');
+    if (hostel === 'pending') errors.push('Hostel');
+    if (lab === 'pending') errors.push('Lab Equipment');
+
+    if (errors.length > 0) {
+      // Show error modal
+      document.getElementById('errorList').innerHTML = errors.map(err => `<li>❌ ${err} Pending</li>`).join('');
+      const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+      errorModal.show();
+      return;
+    }
+
+    // Get values for success modal
+    const name = document.getElementById('fullName').value || 'Student';
+    const regNo = document.getElementById('regNo').value || 'N/A';
+    const dept = document.getElementById('studentDept').value || 'N/A';
+    const year = document.getElementById('studentYear').value || 'N/A';
+    const yearNames = {'1':'1st Year','2':'2nd Year','3':'3rd Year','4':'4th Year (Final)'};
+    const deptNames = {
+      'cse':'CSE','it':'IT','ece':'ECE','eee':'EEE','mech':'MECH','civil':'CIVIL'
+    };
+
+    // Generate Application ID
+    const appId = 'ND-2026-' + String(Math.floor(1000 + Math.random() * 9000));
+
+    // Set success modal values
+    document.getElementById('successName').textContent = name;
+    document.getElementById('successReg').textContent = 'Reg No: ' + regNo;
+    document.getElementById('successDept').textContent = deptNames[dept] || dept;
+    document.getElementById('successYear').textContent = yearNames[year] || year;
+    document.getElementById('appId').textContent = appId;
+
+    // Show success modal
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    successModal.show();
+
+    // Reset form
+    form.reset();
+    form.classList.remove('was-validated');
+    document.getElementById('eligibilityResult').style.display = 'none';
+  });
+});
+
+// ============================================================
+// REAL-TIME ELIGIBILITY CHECK (Auto)
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  const statusFields = [
+    'assignmentsStatus', 'attendanceStatus', 'internalsStatus',
+    'backlogsStatus', 'feeStatus', 'libraryStatus',
+    'hostelStatus', 'labEquipment'
+  ];
+
+  statusFields.forEach(id => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.addEventListener('change', function() {
+        const resultDiv = document.getElementById('eligibilityResult');
+        if (resultDiv.style.display === 'block') {
+          checkEligibility();
+        }
+      });
+    }
+  });
+});
+</script>
+
+<!-- ============================================================ -->
+<!-- ===== STYLES ===== -->
+<!-- ============================================================ -->
+<style>
+.metric-card {
+  transition: transform 0.2s ease;
+}
+.metric-card:hover {
+  transform: translateY(-2px);
+}
+.activity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+</style>
+
+{% include 'footer.html' %}
